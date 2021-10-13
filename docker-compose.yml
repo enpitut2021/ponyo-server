@@ -1,0 +1,27 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:alpine
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    volumes:
+      - db:/var/lib/postgresql/data
+      - ./initdb:/docker-entrypoint-initdb.d
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=ponyo
+      - TZ=Asia/Tokyo
+  
+  flask: 
+     build: ./flask
+     depends_on:
+      - db
+     environment:
+      - "SQL_URL=postgres://db:5432/ponyo?user=iser&password=password&sslmode=disable"
+     ports: 
+      - "9002:9002"
+volumes:
+  db:  
