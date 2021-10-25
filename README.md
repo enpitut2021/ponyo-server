@@ -8,4 +8,6 @@
 
 > curl localhost:9002/task/read
 
-curl -X POST -H "Content-Type: application/json" -H "Origin:http://localhost:9002" -d '{"name":"hogeタスク","user_id":"example-user-id","deadline":""}' localhost:9002/task
+登録：
+
+> curl -X POST -H "Content-Type: application/json" -H "Origin:http://localhost:9002" -d '{"name":"hogeタスク","user_id":"example-user-id","deadline":""}' localhost:9002/task

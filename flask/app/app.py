@@ -1,6 +1,5 @@
 # coding: utf-8
-from flask import Flask, request, render_template, redirect, jsonify, make_response
-import os
+from flask import Flask, request, jsonify, make_response
 import psycopg2
 import urllib.parse
 from flask_cors import CORS
@@ -28,10 +27,8 @@ def getConn():
 def get_task():
     connection = getConn()
     response = []
-
     try:
         query = """select name,id,deadline from tasks"""
-        # ここでスポット登録
         cursor = connection.cursor()
         cursor.execute(query)
         results = cursor.fetchall()
