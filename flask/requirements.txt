@@ -7,4 +7,4 @@ MarkupSafe
 Werkzeug
 flask-cors
 psycopg2-binary==2.9.1
-urllib
+urllib3

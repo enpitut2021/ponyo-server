@@ -11,37 +11,65 @@ CORS(app)
 
 # バッドコードな気がしますが...
 
+
 def getConn():
     urllib.parse.uses_netloc.append("postgres")
-    url = urllib.parse.urlparse(os.environ["SQL_URL"])
     conn = psycopg2.connect(
-        database=url.path[1:],
-        user=url.username,
-        password=url.password,
-        host=url.hostname,
-        port=url.port
+        database='ponyo',
+        user='user',
+        password='password',
+        host='ponyodb',
+        port=5432
     )
     return conn
 
 
-@app.route("/dest", methods=['GET'])
-def get_sample():
-    # jsonオブジェクトを取得
+@app.route("/task/read", methods=['GET'])
+def get_task():
+    connection = getConn()
+    response = []
 
-    return make_response(jsonify({
-        "task_id": "example-photo-link",
-        "name": "hogehoge",
-        "id": "uuid",
-    }), 200)
+    try:
+        query = """select name,id,deadline from tasks"""
+        # ここでスポット登録
+        cursor = connection.cursor()
+        cursor.execute(query)
+        results = cursor.fetchall()
+        for item in results:
+            print(item)
+            task = {"name": item[0], "id": item[1], "deadline": item[2]}
+            response.append(task)
+    except(Exception, psycopg2.Error) as error:
+        print(error)
+        return make_response(jsonify({"status": "failed"}), 500)
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
+        return make_response(jsonify({"tasks": response}), 200)
 
 
 @app.route("/task", methods=['POST'])
-def new_spot():
-    request = request.json
-
-    # ここでスポット登録
-
-    return make_response(jsonify({"status": "success"}), 200)
+def new_task():
+    try:
+        connection = getConn()
+        query = """insert into task(name,deadline,user_id) values(%s %s %s)"""
+        value = (
+            request.json['task_name'],
+            request.json['deadline'],
+            request.json['user_id'])
+        # ここでスポット登録
+        cursor = connection.cursor()
+        cursor.execute(query, value)
+        connection.commit()
+    except(Exception, psycopg2.Error) as error:
+        print(error)
+        return make_response(jsonify({"status": "failed"}), 500)
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
+            return make_response(jsonify({"status": "success"}), 200)
 
 
 @app.route("/test", methods=['POST', 'GET'])
