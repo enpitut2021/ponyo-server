@@ -4,7 +4,7 @@ import os
 import psycopg2
 import urllib.parse
 from flask_cors import CORS
-
+import uuid
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
 CORS(app)
@@ -51,17 +51,21 @@ def get_task():
 
 @app.route("/task", methods=['POST'])
 def new_task():
+    connection = getConn()
+    cursor = connection.cursor()
+    print("hogehoge", flush=True)
     try:
-        connection = getConn()
-        query = """insert into task(name,deadline,user_id) values(%s %s %s)"""
+        query = "insert into tasks(id,name,user_id) values(%s,%s,%s)"
         value = (
-            request.json['task_name'],
-            request.json['deadline'],
+            str(uuid.uuid4()),
+            request.json['name'],
             request.json['user_id'])
+        print(value, flush=True)
         # ここでスポット登録
-        cursor = connection.cursor()
         cursor.execute(query, value)
         connection.commit()
+        count = cursor.rowcount
+        print(count, "Record inserted successfully into mobile table")
     except(Exception, psycopg2.Error) as error:
         print(error)
         return make_response(jsonify({"status": "failed"}), 500)
