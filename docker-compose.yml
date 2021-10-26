@@ -1,6 +1,6 @@
 version: "3.9"
 services:
-  db:
+  ponyodb:
     image: postgres:alpine
     ports:
       - "5432:5432"
@@ -18,9 +18,9 @@ services:
   flask: 
      build: ./flask
      depends_on:
-      - db
+      - ponyodb
      environment:
-      - "SQL_URL=postgres://db:5432/ponyo?user=iser&password=password&sslmode=disable"
+      - "SQL_URL=postgres://ponyodb:5432/ponyo?user=user&password=password&sslmode=disable"
      ports: 
       - "9002:9002"
 volumes:
