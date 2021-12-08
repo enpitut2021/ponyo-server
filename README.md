@@ -12,6 +12,6 @@
 
 登録：
 
-> curl -X POST -H "Content-Type: application/json" -H "Origin:http://localhost:9002" -d '{"name":"hogeタスク","user_id":"example-user-id","deadline":""}' localhost:9002/task
+> curl -X POST -H "Content-Type: application/json" -H "Origin:http://localhost:9002" -d '{"id":"example-task-id","name":"hogeタスク","user_id":"example-user-id","deadline":"","id_done":false}' localhost:9002/task
 
 curl -X POST -H "Content-Type: application/json" -H "Origin:http://localhost:9002" -d '{"desc":"私は財布を落としました","user_id":"example-user-id-3"}' localhost:9002/episode

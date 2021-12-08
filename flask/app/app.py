@@ -49,14 +49,22 @@ def get_task():
 @app.route("/task", methods=['POST'])
 def new_task():
     connection = getConn()
+    jsonObj = request.get_json()
     cursor = connection.cursor()
-    print("hogehoge", flush=True)
+    task_id = ""
+    if jsonObj.get("id") is None:
+        task_id = str(uuid.uuid4())
+    else:
+        task_id = jsonObj.get("id")
+
     try:
-        query = "insert into tasks(id,name,user_id) values(%s,%s,%s)"
+        query = "insert into tasks(id,name,user_id) values(%s,%s,%s) on conflict on constraint task_pkey do update set is_done=%s"
         value = (
-            str(uuid.uuid4()),
+            task_id,
             request.json['name'],
-            request.json['user_id'])
+            request.json['user_id'],
+            request.json['is_done']
+        )
         print(value, flush=True)
         # ここでスポット登録
         cursor.execute(query, value)
@@ -70,7 +78,8 @@ def new_task():
         if connection:
             cursor.close()
             connection.close()
-            return make_response(jsonify({"status": "success"}), 200)
+            return make_response(
+                jsonify({"status": "success", "task_id": task_id}), 200)
 
 
 @app.route("/episode", methods=['POST', 'GET'])
