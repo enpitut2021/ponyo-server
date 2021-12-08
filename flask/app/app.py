@@ -60,7 +60,7 @@ def new_task():
     if jsonObj.get("is_done") is not None:
         task_state = jsonObj.get("is_done")
     try:
-        query = "insert into tasks(id,name,user_id) values(%s,%s,%s) on conflict on constraint task_pkey do update set is_done=%s"
+        query = "insert into tasks(id,name,user_id) values(%s,%s,%s) on conflict on constraint task_pkey do update set is_done=%s, updated_at=CURRENT_TIMESTAMP"
         value = (
             task_id,
             request.json['name'],
