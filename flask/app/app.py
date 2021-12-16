@@ -4,9 +4,22 @@ import psycopg2
 import urllib.parse
 from flask_cors import CORS
 import uuid
+import os
+import tweepy
+
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
 CORS(app)
+
+consumer_key = os.environ["CONSUMER_KEY"]
+consumer_secret = os.environ["CONSUMER_SECRET"]
+access_token = os.environ["ACCESS_TOKEN"]
+access_token_secret = os.environ["ACCESS_TOKEN_SECRET"]
+
+# Twitterオブジェクトの生成
+auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+auth.set_access_token(access_token, access_token_secret)
+api = tweepy.API(auth)
 
 # バッドコードな気がしますが...
 
@@ -107,6 +120,7 @@ def episode():
             if connection:
                 cursor.close()
                 connection.close()
+            api.update_status(response)
             return make_response(jsonify({"episodes": response}), 200)
     # 登録
     elif request.method == 'POST':
@@ -130,6 +144,12 @@ def episode():
                 cursor.close()
                 connection.close()
             return make_response(jsonify({"status": "success"}), 200)
+
+
+@app.route("/test/tweet", methods=['GET'])
+def test_tweet():
+    api.update_status("Pythonから投稿!")
+    return make_response(jsonify({"status": "success"}), 200)
 
 
 @app.route("/test", methods=['POST', 'GET'])

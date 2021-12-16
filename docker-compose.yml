@@ -14,14 +14,16 @@ services:
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=ponyo
       - TZ=Asia/Tokyo
-  
+
   flask: 
-     build: ./flask
-     depends_on:
+    build: ./flask
+    depends_on:
       - ponyodb
-     environment:
+    environment:
       - "SQL_URL=postgres://ponyodb:5432/ponyo?user=user&password=password&sslmode=disable"
-     ports: 
+    ports: 
       - "9002:9002"
+    env_file:
+      - credentials.env
 volumes:
   db:  
