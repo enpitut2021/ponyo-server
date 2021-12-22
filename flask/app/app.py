@@ -169,7 +169,7 @@ def test_tweet():
             if connection:
                 cursor.close()
                 connection.close()
-            api.update_status(response[0].desc)
+            api.update_status(response[0].get("desc"))
             return make_response(jsonify({"episodes": response}), 200)
 
 
