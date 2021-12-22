@@ -120,7 +120,7 @@ def episode():
             if connection:
                 cursor.close()
                 connection.close()
-            api.update_status(response)
+            # api.update_status(response)
             return make_response(jsonify({"episodes": response}), 200)
     # 登録
     elif request.method == 'POST':
@@ -148,8 +148,29 @@ def episode():
 
 @app.route("/test/tweet", methods=['GET'])
 def test_tweet():
-    api.update_status("Pythonから投稿!")
-    return make_response(jsonify({"status": "success"}), 200)
+    connection = getConn()
+    # 読み出し
+    if request.method == 'GET':
+        user_id = request.args.get('user_id', 'example-user-id')
+        response = []
+        try:
+            query = "select description from episodes where user_id=\'{}\'".format(
+                user_id)
+            cursor = connection.cursor()
+            cursor.execute(query)
+            results = cursor.fetchall()
+            for item in results:
+                task = {"desc": item[0], "user_id": user_id}
+                response.append(task)
+        except(Exception, psycopg2.Error) as error:
+            print(error)
+            return make_response(jsonify({"status": "failed"}), 500)
+        finally:
+            if connection:
+                cursor.close()
+                connection.close()
+            api.update_status(response[0].desc)
+            return make_response(jsonify({"episodes": response}), 200)
 
 
 @app.route("/test", methods=['POST', 'GET'])
