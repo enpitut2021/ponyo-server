@@ -185,16 +185,14 @@ def sign_up():
             request.json['password'])
         cursor.execute(query, value)
         connection.commit()
-        count = cursor.rowcount
-        print(count, "Record inserted successfully into mobile table")
-    except(Exception, psycopg2.Error) as error:
+    except(Exception, psycopg2.Error, psycopg2.OperationalError, psycopg2.DatabaseError, psycopg2.DataError, psycopg2.ProgrammingError) as error:
         print(error)
         return make_response(jsonify({"message": "failed"}), 500)
     finally:
         if connection:
             cursor.close()
             connection.close()
-        return make_response(jsonify({"status": "success"}), 200)
+            return make_response(jsonify({"status": "success"}), 200)
 
 
 @app.route("/signin", methods=['POST'])
