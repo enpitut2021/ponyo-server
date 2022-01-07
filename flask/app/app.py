@@ -173,6 +173,56 @@ def test_tweet():
             return make_response(jsonify({"episodes": response}), 200)
 
 
+@app.route("/signup", methods=['POST'])
+def sign_up():
+    connection = getConn()
+    cursor = connection.cursor()
+    try:
+        query = "insert into accounts(id,email,password) values(%s,%s,%s)"
+        value = (
+            str(uuid.uuid4()),
+            request.json['email'],
+            request.json['password'])
+        cursor.execute(query, value)
+        connection.commit()
+    except(Exception, psycopg2.Error, psycopg2.OperationalError, psycopg2.DatabaseError, psycopg2.DataError, psycopg2.ProgrammingError) as error:
+        print(error)
+        return make_response(jsonify({"message": "failed"}), 500)
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
+            return make_response(jsonify({"status": "success"}), 200)
+
+
+@app.route("/signin", methods=['POST'])
+def login():
+    connection = getConn()
+    # 読み出し
+    if request.method == 'POST':
+        email = request.json['email']
+        response = []
+        try:
+            query = "select * from accounts where email=\'{}\'".format(email)
+            cursor = connection.cursor()
+            cursor.execute(query)
+            results = cursor.fetchall()
+            for item in results:
+                task = {"id": item[0]}
+                response.append(task)
+        except(Exception, psycopg2.Error) as error:
+            print(error)
+            return make_response(jsonify({"status": "failed"}), 500)
+        finally:
+            if connection:
+                cursor.close()
+                connection.close()
+            if len(response) != 0:
+                return make_response(jsonify(response[0]), 200)
+            else:
+                return make_response(jsonify({"status": "failed"}), 500)
+
+
 @app.route("/test", methods=['POST', 'GET'])
 def test():
     connection = getConn()
