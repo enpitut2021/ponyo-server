@@ -1,5 +1,9 @@
 # ponyo-server
 
+## ビルド方法
+
+**bash build.shを実行**
+
 滅びの呪文
 
 > docker-compose down --rmi all --volumes --remove-orphans
@@ -21,3 +25,4 @@ curl -X POST -H "Content-Type: application/json" -H "Origin:http://localhost:900
 ```
 curl -X POST -H "Content-Type: application/json" -H "Origin:http://localhost:9002" -d '{"email":"hoge@example.com","password":"password"}' localhost:9002/signup
 ```
+
