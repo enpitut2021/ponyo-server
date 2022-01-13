@@ -39,9 +39,10 @@ def getConn():
 @app.route("/task/read", methods=['GET'])
 def get_task():
     connection = getConn()
+    user_id = request.args.get('user_id', 'example-user-id')
     response = []
     try:
-        query = """select name,id,deadline from tasks"""
+        query = "select name,id,deadline from tasks where user_id=\'{}\'".format(user_id)
         cursor = connection.cursor()
         cursor.execute(query)
         results = cursor.fetchall()

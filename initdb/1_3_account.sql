@@ -7,3 +7,5 @@ CREATE TABLE accounts (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT current_timestamp,
     CONSTRAINT user_pkey PRIMARY KEY(id)
 );
+INSERT INTO accounts(id, email)
+VALUES('example-user-id', 'hoge@example.com');
