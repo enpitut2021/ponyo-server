@@ -54,6 +54,27 @@ def get_alluser():
     return user_id
 
 
+def get_episode(user_id):
+    connection = getConn()
+    response = ""
+    try:
+        query = "select description from episodes where user_id=\'{}\'".format(
+            user_id)
+        cursor = connection.cursor()
+        cursor.execute(query)
+        results = cursor.fetchall()
+        for item in results:
+            print(item)
+            response = item[0]
+    except(Exception, psycopg2.Error) as error:
+        print(error)
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
+    return response
+
+
 def calc_progress(user_id="example-user-id"):
     connection = getConn()
     response = []
@@ -82,7 +103,14 @@ def calc_progress(user_id="example-user-id"):
         t1 = datetime.now()
         task_time = task["deadline"]
         if task_time.timestamp() < t1.timestamp() and task["is_done"] is False:
-            api.update_status("投稿ID: " + str(uuid.uuid4()) + "\n" + task["desc"])
+            api.update_status("投稿ID: " +
+                              str(uuid.uuid4()) +
+                              "\n" +
+                              "恥ずかしいお話:" +
+                              get_episode(user_id) +
+                              "\n" +
+                              "タスク:" +
+                              task["desc"])
 
 
 def batch_process():
@@ -98,8 +126,16 @@ def batch_process():
 
 schedule.every(1).minutes.do(batch_process)
 
+
+def execute_batch():
+    batch_process()
+    while True:
+        schedule.run_pending()
+        sleep(1)
+
+
 if __name__ == "__main__":
-    # batch_process()
+    batch_process()
     while True:
         schedule.run_pending()
         sleep(1)

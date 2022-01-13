@@ -6,6 +6,7 @@ from flask_cors import CORS
 import uuid
 import os
 import tweepy
+import batch
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
@@ -251,4 +252,5 @@ def test():
 
 
 if __name__ == "__main__":
+    batch.batch_process()
     app.run()
