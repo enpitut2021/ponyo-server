@@ -252,5 +252,5 @@ def test():
 
 
 if __name__ == "__main__":
-    batch.batch_process()
+    batch.execute_batch()
     app.run()
