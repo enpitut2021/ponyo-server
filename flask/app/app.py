@@ -43,7 +43,7 @@ def get_task():
     user_id = request.args.get('user_id', 'example-user-id')
     response = []
     try:
-        query = "select name,id,deadline,desc,is_done from tasks where user_id=\'{}\'".format(
+        query = "select name,id,deadline,description,is_done from tasks where user_id=\'{}\'".format(
             user_id)
         cursor = connection.cursor()
         cursor.execute(query)
