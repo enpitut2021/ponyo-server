@@ -7,7 +7,7 @@ import uuid
 import os
 import tweepy
 import batch
-
+import datetime
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
 CORS(app)
@@ -43,13 +43,19 @@ def get_task():
     user_id = request.args.get('user_id', 'example-user-id')
     response = []
     try:
-        query = "select name,id,deadline from tasks where user_id=\'{}\'".format(user_id)
+        query = "select name,id,deadline,description,is_done from tasks where user_id=\'{}\'".format(
+            user_id)
         cursor = connection.cursor()
         cursor.execute(query)
         results = cursor.fetchall()
         for item in results:
             print(item)
-            task = {"name": item[0], "id": item[1], "deadline": item[2]}
+            task = {
+                "name": item[0],
+                "id": item[1],
+                "deadline": item[2],
+                "desc": item[3],
+                "is_done": item[4]}
             response.append(task)
     except(Exception, psycopg2.Error) as error:
         print(error)
@@ -68,19 +74,38 @@ def new_task():
     cursor = connection.cursor()
     task_id = ""
     task_state = False
+    name = ""
+    desc = ""
+    tdatetime = "Wed, 12 Jan 2022 08:20:34 GMT"
+    if 'name' in request.json:
+        name = request.json['name']
+
+    if 'desc' in request.json:
+        desc = request.json['desc']
+
+    if 'deadline' in request.json:
+        tdatetime = datetime.datetime.strptime(
+            request.json['deadline'],
+            '%a, %d %b %Y %H:%M:%S %Z')
+
     if jsonObj.get("id") is None:
         task_id = str(uuid.uuid4())
     else:
         task_id = jsonObj.get("id")
-    if jsonObj.get("is_done") is not None:
+
+    if 'is_done' in request.json:
         task_state = jsonObj.get("is_done")
+
     try:
-        query = "insert into tasks(id,name,user_id) values(%s,%s,%s) on conflict on constraint task_pkey do update set is_done=%s, updated_at=CURRENT_TIMESTAMP"
+        query = "insert into tasks(id,name,description,user_id,deadline) values(%s,%s,%s,%s,%s) on conflict on constraint task_pkey do update set is_done=%s, updated_at=%s"
         value = (
             task_id,
-            request.json['name'],
+            name,
+            desc,
             request.json['user_id'],
-            task_state
+            tdatetime,
+            task_state,
+            datetime.datetime.now(datetime.timezone.utc)
         )
         print(value, flush=True)
         # ここでスポット登録
