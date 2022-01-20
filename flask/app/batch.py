@@ -58,7 +58,7 @@ def getUserName(user_id):
     connection = getConn()
     user_name = "hoge"
     try:
-        query = "select name from accounts where user_id=\'{}\'".format(
+        query = "select name from accounts where id=\'{}\'".format(
             user_id)
         cursor = connection.cursor()
         cursor.execute(query)
@@ -86,7 +86,7 @@ def get_episode(user_id):
         cursor.execute(query)
         results = cursor.fetchall()
         for item in results:
-            print(item)
+            # print(item)
             response = item[0]
     except(Exception, psycopg2.Error) as error:
         print(error)
