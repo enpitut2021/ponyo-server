@@ -23,6 +23,6 @@ curl -X POST -H "Content-Type: application/json" -H "Origin:http://localhost:900
 ユーザー登録:
 
 ```
-curl -X POST -H "Content-Type: application/json" -H "Origin:http://localhost:9002" -d '{"email":"hoge@example.com","password":"password"}' localhost:9002/signup
+curl -X POST -H "Content-Type: application/json" -H "Origin:http://localhost:9002" -d '{"email":"hoge@example.com","password":"password","name":"hogehoge"}' localhost:9002/signup
 ```
 

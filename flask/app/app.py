@@ -85,8 +85,7 @@ def new_task():
 
     if 'deadline' in request.json:
         tdatetime = datetime.datetime.strptime(
-            request.json['deadline'],
-            '%a, %d %b %Y %H:%M:%S %Z')
+            request.json['deadline'], '%a, %d %b %Y %H:%M:%S %Z')
 
     if jsonObj.get("id") is None:
         task_id = str(uuid.uuid4())
@@ -205,11 +204,12 @@ def sign_up():
     connection = getConn()
     cursor = connection.cursor()
     try:
-        query = "insert into accounts(id,email,password) values(%s,%s,%s)"
+        query = "insert into accounts(id,email,password,name) values(%s,%s,%s,%s)"
         value = (
             str(uuid.uuid4()),
             request.json['email'],
-            request.json['password'])
+            request.json['password'],
+            request.json['name'])
         cursor.execute(query, value)
         connection.commit()
     except(Exception, psycopg2.Error, psycopg2.OperationalError, psycopg2.DatabaseError, psycopg2.DataError, psycopg2.ProgrammingError) as error:

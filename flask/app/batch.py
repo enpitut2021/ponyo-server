@@ -54,6 +54,28 @@ def get_alluser():
     return user_id
 
 
+def getUserName(user_id):
+    connection = getConn()
+    user_name = "hoge"
+    try:
+        query = "select name from accounts where user_id=\'{}\'".format(
+            user_id)
+        cursor = connection.cursor()
+        cursor.execute(query)
+        results = cursor.fetchall()
+        for item in results:
+            user_name = item[0]
+    except(Exception, psycopg2.Error) as error:
+        print(error)
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
+    if len(user_name) == 0:
+        user_name = "hoge"
+    return user_name
+
+
 def get_episode(user_id):
     connection = getConn()
     response = ""
@@ -78,6 +100,8 @@ def get_episode(user_id):
 def calc_progress(user_id="example-user-id"):
     connection = getConn()
     response = []
+    count = 0.0
+    t1 = datetime.now()
     try:
         query = "select name,id,deadline,description,is_done from tasks where user_id=\'{}\'".format(
             user_id)
@@ -86,12 +110,14 @@ def calc_progress(user_id="example-user-id"):
         results = cursor.fetchall()
         for item in results:
             print(item)
-            task = {
-                "name": item[0],
-                "id": item[1],
-                "deadline": item[2],
-                "desc": item[3],
-                "is_done": item[4]}
+            thresh_time = t1.timestamp() - (60 * 60 * 24)
+            if thresh_time < item[2].timestamp():
+                task = {
+                    "name": item[0],
+                    "id": item[1],
+                    "deadline": item[2],
+                    "desc": item[3],
+                    "is_done": item[4]}
             response.append(task)
     except(Exception, psycopg2.Error) as error:
         print(error)
@@ -99,18 +125,28 @@ def calc_progress(user_id="example-user-id"):
         if connection:
             cursor.close()
             connection.close()
+    if len(response) == 0:
+        print("Data is not found")
+        return
+
     for task in response:
-        t1 = datetime.now()
-        task_time = task["deadline"]
-        if task_time.timestamp() < t1.timestamp() and task["is_done"] is False:
-            api.update_status("投稿ID: " +
-                              str(uuid.uuid4()) +
-                              "\n" +
-                              "恥ずかしいお話:" +
-                              get_episode(user_id) +
-                              "\n" +
-                              "タスク:" +
-                              task["desc"])
+        if task["deadline"].timestamp() < t1.timestamp(
+        ) and task["is_done"] is False:
+            count = count + 1.0
+    if count / len(response) < 0.3:
+        print("sended")
+        api.update_status("投稿ID: " +
+                          str(uuid.uuid4()) +
+                          "\n" +
+                          "名前:" +
+                          getUserName(user_id) +
+                          "\n" +
+                          "恥ずかしいお話:" +
+                          get_episode(user_id) +
+                          "\n"
+                          )
+    else:
+        print("skipped")
 
 
 def batch_process():
