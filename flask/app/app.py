@@ -78,7 +78,10 @@ def new_task():
     task_state = False
     name = ""
     desc = ""
-    tdatetime = "2022-01-23T05:36:00.000Z"
+    tdatetime_str = "2022-01-23T05:36:00.000Z+0900"
+    print(request.json)
+    tdatetime = datetime.datetime.strptime(
+        tdatetime_str, '%Y-%m-%dT%H:%M:%S.%f%z')
     if 'name' in request.json:
         name = request.json['name']
 
