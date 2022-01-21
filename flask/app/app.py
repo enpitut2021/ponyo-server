@@ -8,6 +8,8 @@ import os
 import tweepy
 import batch
 import datetime
+import pytz
+
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
 CORS(app)
@@ -76,7 +78,7 @@ def new_task():
     task_state = False
     name = ""
     desc = ""
-    tdatetime = "Fri Jan 14 2022 16:44:00 GMT+0900"
+    tdatetime = "2022-01-23T05:36:00.000Z"
     if 'name' in request.json:
         name = request.json['name']
 
@@ -85,11 +87,19 @@ def new_task():
 
     if 'deadline' in request.json:
         try:
-            tdatetime = datetime.datetime.strptime(
-                request.json['deadline'], '%a %d %b %Y %H:%M:%S %Z%z')
-        except Exception as e:
-            print(e)
-            pass
+            tdatetime = datetime.datetime.strptime(request.json["deadline"], '%Y-%m-%dT%H:%M:%S.%fZ')
+            tdatetime = pytz.utc.localize(tdatetime).astimezone(pytz.timezone("Asia/Tokyo"))
+        except ValueError:
+            try:
+                tdatetime = datetime.datetime.strptime(request.json["deadline"], '%Y-%m-%dT%H:%M:%S.%f%z')
+                tdatetime = datetime.datetime.astimezone(pytz.timezone("Asia/Tokyo"))
+            except ValueError:
+                try:
+                    tdatetime = datetime.datetime.strptime(
+                        request.json['deadline'], '%a %d %b %Y %H:%M:%S %Z%z')
+                except Exception as e:
+                    print(e)
+                    pass
 
     if jsonObj.get("id") is None:
         task_id = str(uuid.uuid4())
