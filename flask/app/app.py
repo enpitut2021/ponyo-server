@@ -78,10 +78,12 @@ def new_task():
     task_state = False
     name = ""
     desc = ""
-    tdatetime_str = "2022-01-23T05:36:00.000Z+0900"
+    tdatetime_str = "2022-01-23T05:36:00.000Z"
     print(request.json)
     tdatetime = datetime.datetime.strptime(
-        tdatetime_str, '%Y-%m-%dT%H:%M:%S.%f%z')
+        tdatetime_str, '%Y-%m-%dT%H:%M:%S.%fZ')
+    tdatetime = pytz.utc.localize(tdatetime).astimezone(
+        pytz.timezone("Asia/Tokyo"))
     if 'name' in request.json:
         name = request.json['name']
 
