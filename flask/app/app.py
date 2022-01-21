@@ -76,7 +76,7 @@ def new_task():
     task_state = False
     name = ""
     desc = ""
-    tdatetime = "Wed, 12 Jan 2022 08:20:34 GMT"
+    tdatetime = "Wed, 12 Jan 2022 08:20:34 JST"
     if 'name' in request.json:
         name = request.json['name']
 
