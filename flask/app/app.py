@@ -85,14 +85,18 @@ def new_task():
     if 'desc' in request.json:
         desc = request.json['desc']
 
-    if 'deadline' in request.json:
+    if 'deadline' in request.json and request.json["deadline"] is not None:
         try:
-            tdatetime = datetime.datetime.strptime(request.json["deadline"], '%Y-%m-%dT%H:%M:%S.%fZ')
-            tdatetime = pytz.utc.localize(tdatetime).astimezone(pytz.timezone("Asia/Tokyo"))
+            tdatetime = datetime.datetime.strptime(
+                request.json["deadline"], '%Y-%m-%dT%H:%M:%S.%fZ')
+            tdatetime = pytz.utc.localize(tdatetime).astimezone(
+                pytz.timezone("Asia/Tokyo"))
         except ValueError:
             try:
-                tdatetime = datetime.datetime.strptime(request.json["deadline"], '%Y-%m-%dT%H:%M:%S.%f%z')
-                tdatetime = datetime.datetime.astimezone(pytz.timezone("Asia/Tokyo"))
+                tdatetime = datetime.datetime.strptime(
+                    request.json["deadline"], '%Y-%m-%dT%H:%M:%S.%f%z')
+                tdatetime = datetime.datetime.astimezone(
+                    pytz.timezone("Asia/Tokyo"))
             except ValueError:
                 try:
                     tdatetime = datetime.datetime.strptime(
@@ -118,7 +122,7 @@ def new_task():
             request.json['user_id'],
             tdatetime,
             task_state,
-            datetime.datetime.now(datetime.timezone.utc)
+            datetime.datetime.now()
         )
         print(value, flush=True)
         # ここでスポット登録

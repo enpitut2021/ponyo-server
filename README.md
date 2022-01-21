@@ -20,6 +20,9 @@
 
 > curl -X POST -H "Content-Type: application/json" -H "Origin:http://localhost:9002" -d '{"name":"hogeタスク","user_id":"example-user-id","deadline":"2022-01-23T05:36:00.000Z","is_done":false}' localhost:9002/task
 
+curl -X POST -H "Content-Type: application/json" -H "Origin:http://localhost:9002" -d '{"id":"example-task-id","user_id":"example-user-id","is_done":true}' localhost:9002/task
+
+
 2022-01-23T05:36:00.000Z
 curl -X POST -H "Content-Type: application/json" -H "Origin:http://localhost:9002" -d '{"desc":"私は財布を落としました","user_id":"example-user-id-3"}' localhost:9002/episode
 
