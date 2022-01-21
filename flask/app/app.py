@@ -76,7 +76,7 @@ def new_task():
     task_state = False
     name = ""
     desc = ""
-    tdatetime = "Wed, 12 Jan 2022 08:20:34 JST"
+    tdatetime = "Fri Jan 14 2022 16:44:00 GMT+0900"
     if 'name' in request.json:
         name = request.json['name']
 
@@ -86,7 +86,7 @@ def new_task():
     if 'deadline' in request.json:
         try:
             tdatetime = datetime.datetime.strptime(
-                request.json['deadline'], '%a, %d %b %Y %H:%M:%S %Z%z')
+                request.json['deadline'], '%a %d %b %Y %H:%M:%S %Z%z')
         except Exception as e:
             print(e)
             pass
