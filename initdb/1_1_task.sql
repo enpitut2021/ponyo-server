@@ -18,7 +18,7 @@ VALUES(
         'テストタスク',
         'これはテストタスクです',
         'example-user-id',
-        'Wed, 12 Jan 2022 08:20:34 GMT'
+        'Wed, 12 Jan 2022 08:20:34 JST'
     );
 INSERT INTO tasks(id, name, description, user_id, deadline)
 VALUES(
@@ -26,7 +26,7 @@ VALUES(
         'テストタスク',
         'これはテストタスクです',
         'example-user-id-1',
-        'Wed, 12 Jan 2022 08:20:34 GMT'
+        'Wed, 12 Jan 2022 08:20:34 JST'
     );
 INSERT INTO tasks(id, name, description, user_id, deadline)
 VALUES(
@@ -34,5 +34,5 @@ VALUES(
         'テストタスク',
         'これはテストタスクです',
         'example-user-id-2',
-        'Wed, 12 Jan 2022 08:20:34 GMT'
+        'Wed, 12 Jan 2022 08:20:34 JST'
     );

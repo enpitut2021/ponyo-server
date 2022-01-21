@@ -84,8 +84,12 @@ def new_task():
         desc = request.json['desc']
 
     if 'deadline' in request.json:
-        tdatetime = datetime.datetime.strptime(
-            request.json['deadline'], '%a, %d %b %Y %H:%M:%S %Z')
+        try:
+            tdatetime = datetime.datetime.strptime(
+                request.json['deadline'], '%a, %d %b %Y %H:%M:%S %Z%z')
+        except Exception as e:
+            print(e)
+            pass
 
     if jsonObj.get("id") is None:
         task_id = str(uuid.uuid4())
